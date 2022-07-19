@@ -4,15 +4,14 @@ import (
 	"encoding/json"
 	"flag"
 	"io"
-	"log"
 	"os"
 )
 
 type Config struct {
-	Bot bot `json:"bot"`
+	Bot Bot `json:"bot"`
 }
 
-type bot struct {
+type Bot struct {
 	Platform string `json:"platform"`
 	Name     string `json:"name"`
 	Token    string `json:"token"`
@@ -34,13 +33,13 @@ func readConfigJSON(filePath string) (*Config, error) {
 	return &cfg, nil
 }
 
-func LoadConfigJson() *Config {
+func LoadConfigJson() (*Config, error) {
 	configJSON := flag.String("bot", "config.json", "Defines configuration file option")
 	flag.Parse()
 
 	cfg, err := readConfigJSON(*configJSON)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	return cfg
+	return cfg, nil
 }
