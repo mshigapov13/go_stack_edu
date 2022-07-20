@@ -3,52 +3,47 @@ package inmemory
 import (
 	"fmt"
 
-	"gitlab.ozon.dev/mshigapov13/hw/internal/domain/models"
-	"gitlab.ozon.dev/mshigapov13/hw/internal/ports"
+	models "gitlab.ozon.dev/mshigapov13/hw/internal/domain/models/competitors"
+	ports "gitlab.ozon.dev/mshigapov13/hw/internal/ports/competitors"
 )
 
 var _ ports.CompetitorsStorage = (*InMemoryDB)(nil)
 
-func (db *InMemoryDB) Create(firstName string, lastName string, club string, yearBirth int) (uint, error) {
-	cmtr := models.NewCompetitor(firstName, lastName, club, yearBirth)
+func (db *InMemoryDB) Add(cmtr *models.Competitor) (*models.Competitor, error) {
 	db.writeToDb(cmtr)
-	return db.lastId, nil
+	return db.data[db.lastId], nil
 }
 
-func (db *InMemoryDB) List() []*models.Competitor {
-	res := make([]*models.Competitor, len(db.data))
-	for _, v := range db.data {
-		res = append(res, v)
-	}
-	return res
-}
-
-func (db *InMemoryDB) GetById(id uint) (*models.Competitor, error) {
+func (db *InMemoryDB) ReadById(id uint) (*models.Competitor, error) {
 	if db.isExists(id) {
 		return db.data[id], nil
-	} else {
-		return nil, fmt.Errorf("ompetitor doesn't exists")
 	}
+	return nil, fmt.Errorf(competitorDoesntExists)
 }
 
-func (db *InMemoryDB) Delete(id uint) (bool, error) {
-	isRemoved := true
+func (db *InMemoryDB) RemoveById(id uint) (*models.Competitor, error) {
+	var removedCompetitor *models.Competitor
+
 	if !db.isExists(id) {
-		return !isRemoved, fmt.Errorf("user with %d id already doesn't exists", id)
+		return models.EmptyCompetitorWithId(id), fmt.Errorf(alreadyDoesntExists, id)
 	}
+	removedCompetitor = db.data[id]
 	db.removeFromDB(id)
-	return isRemoved, nil
+	return removedCompetitor, nil
 }
 
-func (db *InMemoryDB) Update(id uint, firstName string, lastName string, club string, yearBirth int) (*models.Competitor, error) {
-	if !db.isExists(id) {
-		return &models.Competitor{}, fmt.Errorf("user with %d id doesn't exists", id)
+func (db *InMemoryDB) UpdateById(cmtr *models.Competitor) (*models.Competitor, error) {
+	updateId := cmtr.GetId()
+	if !db.isExists(updateId) {
+		return models.EmptyCompetitorWithId(updateId), fmt.Errorf(competitorDoesntExists)
 	}
-	db.data[id] = models.NewCompetitor(firstName, lastName, club, yearBirth)
-	return db.data[id], nil
+	return db.updateExistedCompetitor(cmtr), nil
 }
 
-func (db *InMemoryDB) isExists(id uint) bool {
-	_, isExists := db.data[id]
-	return isExists
+func (db *InMemoryDB) List() ([]*models.Competitor, error) {
+	list := make([]*models.Competitor, 0, len(db.data))
+	for _, v := range db.data {
+		list = append(list, v)
+	}
+	return list, nil
 }
