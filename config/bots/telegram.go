@@ -1,4 +1,4 @@
-package config
+package telegram
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-type Config struct {
+type TgcmConfig struct {
 	Bot Bot `json:"bot"`
 }
 
@@ -17,14 +17,14 @@ type Bot struct {
 	Token    string `json:"token"`
 }
 
-func readConfigJSON(filePath string) (*Config, error) {
+func readConfigJSON(filePath string) (*TgcmConfig, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	var cfg Config
+	var cfg TgcmConfig
 	byteValue, _ := io.ReadAll(file)
 	err = json.Unmarshal(byteValue, &cfg)
 	if err != nil {
@@ -33,7 +33,7 @@ func readConfigJSON(filePath string) (*Config, error) {
 	return &cfg, nil
 }
 
-func LoadConfigJson() (*Config, error) {
+func LoadConfigJson() (*TgcmConfig, error) {
 	configJSON := flag.String("bot", "config.json", "Defines configuration file option")
 	flag.Parse()
 

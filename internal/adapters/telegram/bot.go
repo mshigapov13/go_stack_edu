@@ -4,15 +4,15 @@ import (
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"gitlab.ozon.dev/mshigapov13/hw/config"
+	config "gitlab.ozon.dev/mshigapov13/hw/config/bots"
 )
 
-type TgBot struct {
+type Bot struct {
 	API  *tgbotapi.BotAPI
 	name string
 }
 
-func NewTgBot(cfg config.Bot) (*TgBot, error) {
+func InitTgBot(cfg config.Bot) (*Bot, error) {
 	var (
 		botAPI *tgbotapi.BotAPI
 		err    error
@@ -20,20 +20,20 @@ func NewTgBot(cfg config.Bot) (*TgBot, error) {
 
 	botAPI, err = tgbotapi.NewBotAPI(cfg.Token)
 	if err != nil {
-		log.Fatalf("New Telegram botAPI instanse creation failed: ", err)
+		log.Fatalf("New Telegram botAPI instanse creation failed: %s", err)
 	}
 
 	botAPI.Debug = true
 	log.Printf("Authorized on account %s", botAPI.Self.UserName)
 
-	bot := TgBot{
+	bot := Bot{
 		name: cfg.Name,
 		API:  botAPI,
 	}
 	return &bot, nil
 }
 
-func (bot *TgBot) Start() error {
+func (bot *Bot) Run() error {
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 30
 

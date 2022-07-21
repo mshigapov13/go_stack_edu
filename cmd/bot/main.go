@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"gitlab.ozon.dev/mshigapov13/hw/config"
+	tgmbot "gitlab.ozon.dev/mshigapov13/hw/config/bots"
 	tgbotapp "gitlab.ozon.dev/mshigapov13/hw/internal/application/telegram"
 )
 
@@ -16,11 +16,11 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGTERM, os.Interrupt)
 	defer cancel()
 
-	cfg, err := config.LoadConfigJson()
+	tgmbotCfg, err := tgmbot.LoadConfigJson()
 	if err != nil {
-		log.Fatalf("Config loading failed: ", err)
+		log.Fatalf("Telegram bot Config loading failed: %s", err)
 	}
 
-	go tgbotapp.Start(cfg.Bot)
+	go tgbotapp.Start(tgmbotCfg.Bot)
 	<-ctx.Done()
 }
