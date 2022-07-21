@@ -12,7 +12,7 @@ func (b *Bot) AddHandlers() {
 	b.RegisterRouter(cmds.StartCmd, startFunc)
 	b.RegisterRouter(cmds.HelpCmd, helpFunc)
 	b.RegisterRouter(cmds.CreateCmd, b.createFunc)
-	b.RegisterRouter(cmds.ReadCmd, readFunc)
+	b.RegisterRouter(cmds.ReadCmd, b.readFunc)
 	b.RegisterRouter(cmds.UpdateCmd, updateFunc)
 	b.RegisterRouter(cmds.DeleteCmd, deleteFunc)
 	b.RegisterRouter(cmds.ListCmd, listFunc)
@@ -40,11 +40,11 @@ func (b *Bot) createFunc(str string) string {
 	city := inp[2]
 	yearBirth, err := strconv.Atoi(inp[3])
 	if err != nil {
-		return errBadYearBirth.Error() + "\n" + requestFormat
+		return errBadId.Error() + "\n" + createRequestFormat
 	}
 	cmtr, err := competitor.NewCompetitor(fName, lName, city, yearBirth)
 	if err != nil {
-		return err.Error() + "\n" + requestFormat
+		return err.Error() + "\n\n" + createRequestFormat
 	}
 	newCmtr, err := b.competition.Add(cmtr)
 	if err != nil {
@@ -53,8 +53,16 @@ func (b *Bot) createFunc(str string) string {
 	return newCmtr.String()
 }
 
-func readFunc(str string) string {
-	return "was requested READ"
+func (b *Bot) readFunc(str string) string {
+	id, err := strconv.ParseUint(str, 10, 64)
+	if err != nil {
+		return errBadId.Error() + "\n" + readRequestFroamt
+	}
+	cmtr, err := b.competition.ReadById(uint(id))
+	if err != nil {
+		return err.Error()
+	}
+	return cmtr.String()
 }
 
 func updateFunc(str string) string {

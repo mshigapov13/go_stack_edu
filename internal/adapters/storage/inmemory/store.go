@@ -18,7 +18,7 @@ func (db *InMemoryDB) ReadById(id uint) (*models.Competitor, error) {
 	if db.isExists(id) {
 		return db.data[id], nil
 	}
-	return nil, fmt.Errorf(competitorDoesntExists)
+	return nil, fmt.Errorf(competitorDoesntExists, id)
 }
 
 func (db *InMemoryDB) RemoveById(id uint) (*models.Competitor, error) {

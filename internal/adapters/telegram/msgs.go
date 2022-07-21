@@ -5,12 +5,15 @@ import (
 )
 
 const (
-	botCreationIsFalied_format = "New Telegram botAPI instanse creation failed: %s"
-	authorizedOnAccount_format = "Authorized on account %s"
-	userSendedTextIs_format    = "you send <%v>"
-	respWasntSended_format     = "Message wasn't sended %s"
-	requestFormat              = `Request format needs to be:
-	/command FirstName(string) LastName(string) City(string) YearBirth(int)`
+	botCreationIsFalied_format   = "New Telegram botAPI instanse creation failed: %s"
+	authorizedOnAccount_format   = "Authorized on account %s"
+	userSendedTextIs_format      = "you send <%v>"
+	respWasntSended_format       = "Message wasn't sended %s"
+	requestFormatNeedsToBeHeader = "Request format needst to be:"
+	createRequestFormat          = requestFormatNeedsToBeHeader + "\n" +
+		"/create FirstName(string) LastName(string) City(string) YearBirth(integer)"
+	readRequestFroamt = requestFormatNeedsToBeHeader + "\n" +
+		"/read Id(integer)"
 )
 
 func respTextForWrongComand(err error) string {
