@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -13,7 +14,7 @@ func (b *Bot) AddHandlers() {
 	b.RegisterRouter(cmds.HelpCmd, helpFunc)
 	b.RegisterRouter(cmds.CreateCmd, b.createFunc)
 	b.RegisterRouter(cmds.ReadCmd, b.readFunc)
-	b.RegisterRouter(cmds.UpdateCmd, updateFunc)
+	b.RegisterRouter(cmds.UpdateCmd, b.updateFunc)
 	b.RegisterRouter(cmds.DeleteCmd, b.deleteFunc)
 	b.RegisterRouter(cmds.ListCmd, b.listFunc)
 }
@@ -33,30 +34,31 @@ func helpFunc(str string) string {
 func (b *Bot) createFunc(str string) string {
 	inp := strings.Split(str, " ")
 	if len(inp) != 4 {
-		return responsIfError(errArgCount, createRequestFormat)
+		return responseIfError(errArgCount, createRequestFormat)
 	}
 	fName := inp[0]
 	lName := inp[1]
 	city := inp[2]
 	yearBirth, err := strconv.Atoi(inp[3])
 	if err != nil {
-		return responsIfError(errBadYearBirth, createRequestFormat)
+		return responseIfError(errBadYearBirth, createRequestFormat)
 	}
+
 	cmtr, err := competitor.NewCompetitor(fName, lName, city, yearBirth)
 	if err != nil {
-		return responsIfError(errArgCount, createRequestFormat)
+		return responseIfError(err, createRequestFormat)
 	}
 	newCmtr, err := b.competition.Add(cmtr)
 	if err != nil {
 		return err.Error()
 	}
-	return newCmtr.String()
+	return strings.Join([]string{newCmtr.String(), isCreated}, "\n\n")
 }
 
 func (b *Bot) readFunc(str string) string {
 	id, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
-		return responsIfError(errBadId, readRequestFormat)
+		return responseIfError(errBadId, readRequestFormat)
 	}
 	cmtr, err := b.competition.ReadById(uint(id))
 	if err != nil {
@@ -65,25 +67,50 @@ func (b *Bot) readFunc(str string) string {
 	return cmtr.String()
 }
 
-func updateFunc(str string) string {
-	return "was requested UPDATE"
+func (b *Bot) updateFunc(str string) string {
+	inp := strings.Split(str, " ")
+	if len(inp) != 5 {
+		return responseIfError(errArgCount, updateRequestFormat)
+	}
+	id, err := strconv.ParseUint(inp[0], 10, 64)
+	if err != nil {
+		return responseIfError(errBadId, updateRequestFormat)
+	}
+	fName := inp[1]
+	lName := inp[2]
+	city := inp[3]
+	yearBirth, err := strconv.Atoi(inp[4])
+	if err != nil {
+		return responseIfError(errBadYearBirth, updateRequestFormat)
+	}
+
+	cmtr, err := competitor.NewCompetitor(fName, lName, city, yearBirth)
+	if err != nil {
+		return responseIfError(err, updateRequestFormat)
+	}
+	cmtr.SetId(uint(id))
+	newCmtr, err := b.competition.UpdateById(cmtr)
+	if err != nil {
+		return err.Error()
+	}
+	return strings.Join([]string{newCmtr.String(), fmt.Sprintf(isUpdated_format, id)}, "\n\n")
 }
 
 func (b *Bot) deleteFunc(str string) string {
 	id, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
-		return responsIfError(errBadId, deleteRequestFormat)
+		return responseIfError(errBadId, deleteRequestFormat)
 	}
 	cmtr, err := b.competition.RemoveById(uint(id))
 	if err != nil {
 		return err.Error()
 	}
-	return cmtr.String() + "\n\n" + competitorWasDeleted
+	return strings.Join([]string{cmtr.String(), fmt.Sprintf(isDeleted_format, id)}, "\n\n")
 }
 
 func (b *Bot) listFunc(str string) string {
 	if str != "" {
-		return responsIfError(errArgCount, listRequestFormat)
+		return responseIfError(errArgCount, listRequestFormat)
 	}
 	list, _ := b.competition.List()
 	if len(list) == 0 {

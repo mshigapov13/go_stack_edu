@@ -58,7 +58,7 @@ func (b *Bot) Run() error {
 			if f, ok := b.router[cmd]; ok {
 				msg.Text = f(update.Message.CommandArguments())
 			} else {
-				msg.Text = responsIfError(botCmds.ErrUnknownCommand, botCmds.AvailableCommandsTitle+"\n/"+botCmds.HelpCmd)
+				msg.Text = responseIfError(botCmds.ErrUnknownCommand, botCmds.AvailableCommandsTitle+"\n/"+botCmds.HelpCmd)
 			}
 			// switch cmd {
 			// case listCmd:
