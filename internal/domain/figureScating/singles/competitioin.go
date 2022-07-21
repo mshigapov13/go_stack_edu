@@ -1,6 +1,10 @@
 package singles
 
-import ports "gitlab.ozon.dev/mshigapov13/hw/internal/ports/competitors"
+import (
+	"log"
+
+	ports "gitlab.ozon.dev/mshigapov13/hw/internal/ports/competitors"
+)
 
 type Competition struct {
 	db                ports.CompetitorsStorage
@@ -9,6 +13,7 @@ type Competition struct {
 }
 
 func Init(db ports.CompetitorsStorage, cities []string, maxAge int) *Competition {
+	log.Println(initService)
 	return &Competition{
 		db:                db,
 		unsupportedCities: unsupportedCitiesSliceToMap(cities),

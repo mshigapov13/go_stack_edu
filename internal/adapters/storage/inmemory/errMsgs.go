@@ -2,6 +2,6 @@ package inmemory
 
 const (
 	initStorage            = "init inmemory storage"
-	competitorDoesntExists = "competitor with %d doesn't exist"
-	alreadyDoesntExists    = "competitor with %d already exists"
+	competitorDoesntExists = "competitor with id=%d doesn't exist"
+	alreadyDoesntExists    = "competitor with id=%d already doesn't exists"
 )

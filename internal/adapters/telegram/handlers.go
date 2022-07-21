@@ -33,18 +33,18 @@ func helpFunc(str string) string {
 func (b *Bot) createFunc(str string) string {
 	inp := strings.Split(str, " ")
 	if len(inp) != 4 {
-		return errCreateArgCount.Error()
+		return responsIfError(errArgCount, createRequestFormat)
 	}
 	fName := inp[0]
 	lName := inp[1]
 	city := inp[2]
 	yearBirth, err := strconv.Atoi(inp[3])
 	if err != nil {
-		return errBadId.Error() + "\n" + createRequestFormat
+		return responsIfError(errBadYearBirth, createRequestFormat)
 	}
 	cmtr, err := competitor.NewCompetitor(fName, lName, city, yearBirth)
 	if err != nil {
-		return err.Error() + "\n\n" + createRequestFormat
+		return responsIfError(errArgCount, createRequestFormat)
 	}
 	newCmtr, err := b.competition.Add(cmtr)
 	if err != nil {
@@ -56,7 +56,8 @@ func (b *Bot) createFunc(str string) string {
 func (b *Bot) readFunc(str string) string {
 	id, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
-		return errBadId.Error() + "\n" + readRequestFormat
+		return responsIfError(errBadId, readRequestFormat)
+		// return errBadId.Error() + "\n" + readRequestFormat
 	}
 	cmtr, err := b.competition.ReadById(uint(id))
 	if err != nil {
@@ -72,7 +73,8 @@ func updateFunc(str string) string {
 func (b *Bot) deleteFunc(str string) string {
 	id, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
-		return errBadId.Error() + "\n" + deleteRequestFormat
+		return responsIfError(errBadId, deleteRequestFormat)
+		// return errBadId.Error() + "\n" + deleteRequestFormat
 	}
 	cmtr, err := b.competition.RemoveById(uint(id))
 	if err != nil {
