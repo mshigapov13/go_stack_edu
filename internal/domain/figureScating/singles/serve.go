@@ -23,7 +23,8 @@ func (c *Competition) Add(cmtr *models.Competitor) (*models.Competitor, error) {
 }
 
 func (c *Competition) List() ([]*models.Competitor, error) {
-	return c.db.List()
+	list, _ := c.db.List()
+	return list, nil
 }
 
 func (c *Competition) ReadById(id uint) (*models.Competitor, error) {

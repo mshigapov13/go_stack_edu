@@ -3,7 +3,7 @@ package commands
 import "strings"
 
 const (
-	AvailableCommandsTitle = "available commands"
+	AvailableCommandsTitle = "To see available commands run:"
 )
 
 var (

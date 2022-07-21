@@ -12,7 +12,10 @@ const (
 		"/read Id(uint)"
 	deleteRequestFormat = requestFormatNeedsToBeHeader + "\n" +
 		"/del Id(uint)"
+	listRequestFormat = requestFormatNeedsToBeHeader + "\n" +
+		"/list"
 	competitorWasDeleted = "competitor was removed"
+	emptyCompetition     = "There are no competitors"
 )
 
 func responsIfError(err error, str string) string {

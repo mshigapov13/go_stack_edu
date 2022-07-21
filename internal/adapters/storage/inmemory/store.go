@@ -2,6 +2,7 @@ package inmemory
 
 import (
 	"fmt"
+	"sort"
 
 	models "gitlab.ozon.dev/mshigapov13/hw/internal/domain/models/competitors"
 	ports "gitlab.ozon.dev/mshigapov13/hw/internal/ports/competitors"
@@ -35,7 +36,7 @@ func (db *InMemoryDB) RemoveById(id uint) (*models.Competitor, error) {
 func (db *InMemoryDB) UpdateById(cmtr *models.Competitor) (*models.Competitor, error) {
 	updateId := cmtr.GetId()
 	if !db.isExists(updateId) {
-		return models.EmptyCompetitorWithId(updateId), fmt.Errorf(competitorDoesntExists)
+		return models.EmptyCompetitorWithId(updateId), fmt.Errorf(competitorDoesntExists, updateId)
 	}
 	return db.updateExistedCompetitor(cmtr), nil
 }
@@ -45,5 +46,19 @@ func (db *InMemoryDB) List() ([]*models.Competitor, error) {
 	for _, v := range db.data {
 		list = append(list, v)
 	}
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].GetId() < list[j].GetId()
+	})
+	list = removeSeedItem(list)
 	return list, nil
+}
+
+func removeSeedItem(list []*models.Competitor) []*models.Competitor {
+	if 0 == len(list)-1 {
+		return nil
+	}
+	copy(list[0:], list[1:])
+	list[len(list)-1] = nil
+	list = list[:len(list)-1]
+	return list
 }

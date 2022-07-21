@@ -15,7 +15,7 @@ func (b *Bot) AddHandlers() {
 	b.RegisterRouter(cmds.ReadCmd, b.readFunc)
 	b.RegisterRouter(cmds.UpdateCmd, updateFunc)
 	b.RegisterRouter(cmds.DeleteCmd, b.deleteFunc)
-	b.RegisterRouter(cmds.ListCmd, listFunc)
+	b.RegisterRouter(cmds.ListCmd, b.listFunc)
 }
 
 func (b *Bot) RegisterRouter(cmd string, f cmdHandler) {
@@ -57,7 +57,6 @@ func (b *Bot) readFunc(str string) string {
 	id, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
 		return responsIfError(errBadId, readRequestFormat)
-		// return errBadId.Error() + "\n" + readRequestFormat
 	}
 	cmtr, err := b.competition.ReadById(uint(id))
 	if err != nil {
@@ -74,7 +73,6 @@ func (b *Bot) deleteFunc(str string) string {
 	id, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
 		return responsIfError(errBadId, deleteRequestFormat)
-		// return errBadId.Error() + "\n" + deleteRequestFormat
 	}
 	cmtr, err := b.competition.RemoveById(uint(id))
 	if err != nil {
@@ -83,6 +81,17 @@ func (b *Bot) deleteFunc(str string) string {
 	return cmtr.String() + "\n\n" + competitorWasDeleted
 }
 
-func listFunc(str string) string {
-	return "was requested LIST"
+func (b *Bot) listFunc(str string) string {
+	if str != "" {
+		return responsIfError(errArgCount, listRequestFormat)
+	}
+	list, _ := b.competition.List()
+	if len(list) == 0 {
+		return emptyCompetition
+	}
+	res := make([]string, len(list))
+	for i, v := range list {
+		res[i] = v.String()
+	}
+	return strings.Join(res, "\n")
 }
