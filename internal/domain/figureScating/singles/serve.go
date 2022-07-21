@@ -12,7 +12,7 @@ var _ ports.CompetitionService = (*Competition)(nil)
 
 func (c *Competition) Add(cmtr *models.Competitor) (*models.Competitor, error) {
 	if c.isCityUneligible(cmtr.GetCity()) {
-		return nil, fmt.Errorf(uneligibleCity)
+		return nil, fmt.Errorf(uneligibleCity, cmtr.GetCity())
 	}
 	age := time.Now().Local().Year() - cmtr.GetYearBirth()
 	if age > c.limitAge {
