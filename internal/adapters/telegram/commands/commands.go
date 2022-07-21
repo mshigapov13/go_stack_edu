@@ -1,31 +1,31 @@
 package commands
 
 const (
-	listCmd              = "list"
+	ListCmd              = "list"
 	listCmdDescription   = "returns competitors"
-	createCmd            = "create"
+	CreateCmd            = "create"
 	createCmdDescription = "creates competitor"
-	readCmd              = "read"
+	ReadCmd              = "read"
 	readCmdDescription   = "returns competitor by id"
-	updateCmd            = "upd"
+	UpdateCmd            = "upd"
 	updateCmdDescription = "updates competitor by id"
-	deleteCmd            = "del"
+	DeleteCmd            = "del"
 	deleteCmdDescription = "removes competitor by id"
-	startCmd             = "start"
+	StartCmd             = "start"
 	startCmdDescription  = "starts bot"
-	helpCmd              = "help"
+	HelpCmd              = "help"
 	helpCmdDescription   = "list of commands"
 )
 
 var (
 	Commands = []string{
-		listCmd,
-		createCmd,
-		readCmd,
-		updateCmd,
-		deleteCmd,
-		startCmd,
-		helpCmd,
+		ListCmd,
+		CreateCmd,
+		ReadCmd,
+		UpdateCmd,
+		DeleteCmd,
+		StartCmd,
+		HelpCmd,
 	}
 	commandsDescription = []string{
 		listCmdDescription,

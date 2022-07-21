@@ -1,4 +1,4 @@
-package bot
+package telegram
 
 import (
 	"fmt"
@@ -6,12 +6,13 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	config "gitlab.ozon.dev/mshigapov13/hw/config/bots"
+
+	// handlers "gitlab.ozon.dev/mshigapov13/hw/internal/adapters/telegram/handlers"
 	botCmds "gitlab.ozon.dev/mshigapov13/hw/internal/adapters/telegram/commands"
 	ports "gitlab.ozon.dev/mshigapov13/hw/internal/ports/competitors"
 )
 
 type cmdHandler func(string) string
-
 type Bot struct {
 	API         *tgbotapi.BotAPI
 	name        string
@@ -33,18 +34,14 @@ func InitTgBot(cfg config.Bot, competition ports.CompetitionService) (*Bot, erro
 	botAPI.Debug = true
 	log.Printf(authorizedOnAccount_format, botAPI.Self.UserName)
 
-	bot := Bot{
+	bot := &Bot{
 		name:        cfg.Name,
 		API:         botAPI,
 		competition: competition,
 		router:      make(map[string]cmdHandler),
 	}
-	return &bot, nil
-}
-
-func (b *Bot) RegisterRouter(cmd string, f cmdHandler) {
-	b.router[cmd] = f
-
+	bot.AddHandlers()
+	return bot, nil
 }
 
 func (b *Bot) Run() error {
@@ -61,7 +58,7 @@ func (b *Bot) Run() error {
 			if f, ok := b.router[cmd]; ok {
 				msg.Text = f(update.Message.CommandArguments())
 			} else {
-				msg.Text = respTextForWrongComand(botCmds.ErrUnknownCommand)
+				msg.Text = respTextForWrongComand(botCmds.ErrUnknownCommand) + "HHH"
 			}
 			// switch cmd {
 			// case listCmd:
@@ -91,24 +88,4 @@ func (b *Bot) Run() error {
 		}
 	}
 	return nil
-}
-
-func deleteFunc() string {
-	return "was requested DELETE"
-}
-
-func updateFunc() string {
-	return "was requested UPDATE"
-}
-
-func readFunc() string {
-	return "was requested READ"
-}
-
-func createFunc() string {
-	return "was requested CREATE"
-}
-
-func listFunc() string {
-	return "was requested LIST"
 }

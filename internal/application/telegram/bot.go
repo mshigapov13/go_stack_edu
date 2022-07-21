@@ -5,7 +5,7 @@ import (
 
 	config "gitlab.ozon.dev/mshigapov13/hw/config/bots"
 	storage "gitlab.ozon.dev/mshigapov13/hw/internal/adapters/storage/inmemory"
-	tgBog "gitlab.ozon.dev/mshigapov13/hw/internal/adapters/telegram/bot"
+	tgBog "gitlab.ozon.dev/mshigapov13/hw/internal/adapters/telegram"
 	service "gitlab.ozon.dev/mshigapov13/hw/internal/domain/figureScating/singles"
 	"golang.org/x/sync/errgroup"
 )

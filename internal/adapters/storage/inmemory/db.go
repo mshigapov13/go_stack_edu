@@ -24,7 +24,8 @@ func Init() *InMemoryDB {
 	db := InMemoryDB{}
 	db.data = make(map[uint]*models.Competitor)
 
-	seed := models.NewCompetitor(fNameSeed, lNameSeed, citySeed, yearBirthSeed)
+	seed, _ := models.NewCompetitor(fNameSeed, lNameSeed, citySeed, yearBirthSeed)
+
 	seed.SetId(db.lastId)
 	db.data[db.lastId] = seed
 	return &db

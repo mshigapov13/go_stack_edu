@@ -2,7 +2,7 @@ package competitor
 
 import "fmt"
 
-var competitorToStringFormat = "id:%d | FirstName: %s LastName: %s | Club: %s | YearBirth: %d"
+var competitorToStringFormat = "id:%d | FirstName: %s LastName: %s | City: %s | YearBirth: %d"
 
 type Competitor struct {
 	id        uint
@@ -12,14 +12,27 @@ type Competitor struct {
 	city      string
 }
 
-func NewCompetitor(fName, lName, city string, yearBirth int) *Competitor {
+func NewCompetitor(fName, lName, city string, yearBirth int) (*Competitor, error) {
+	var err error
 	cmtr := &Competitor{}
 
-	cmtr.SetFirstName(fName)
-	cmtr.SetLastName(lName)
-	cmtr.SetYearBirth(yearBirth)
-	cmtr.SetCity(city)
-	return cmtr
+	err = cmtr.SetFirstName(fName)
+	if err != nil {
+		return nil, err
+	}
+	err = cmtr.SetLastName(lName)
+	if err != nil {
+		return nil, err
+	}
+	err = cmtr.SetYearBirth(yearBirth)
+	if err != nil {
+		return nil, err
+	}
+	err = cmtr.SetCity(city)
+	if err != nil {
+		return nil, err
+	}
+	return cmtr, nil
 }
 
 func (cmtr *Competitor) SetFirstName(name string) error {
