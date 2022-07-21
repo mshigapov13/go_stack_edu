@@ -14,7 +14,7 @@ func (b *Bot) AddHandlers() {
 	b.RegisterRouter(cmds.CreateCmd, b.createFunc)
 	b.RegisterRouter(cmds.ReadCmd, b.readFunc)
 	b.RegisterRouter(cmds.UpdateCmd, updateFunc)
-	b.RegisterRouter(cmds.DeleteCmd, deleteFunc)
+	b.RegisterRouter(cmds.DeleteCmd, b.deleteFunc)
 	b.RegisterRouter(cmds.ListCmd, listFunc)
 }
 
@@ -56,7 +56,7 @@ func (b *Bot) createFunc(str string) string {
 func (b *Bot) readFunc(str string) string {
 	id, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
-		return errBadId.Error() + "\n" + readRequestFroamt
+		return errBadId.Error() + "\n" + readRequestFormat
 	}
 	cmtr, err := b.competition.ReadById(uint(id))
 	if err != nil {
@@ -69,8 +69,16 @@ func updateFunc(str string) string {
 	return "was requested UPDATE"
 }
 
-func deleteFunc(str string) string {
-	return "was requested DELETE"
+func (b *Bot) deleteFunc(str string) string {
+	id, err := strconv.ParseUint(str, 10, 64)
+	if err != nil {
+		return errBadId.Error() + "\n" + deleteRequestFormat
+	}
+	cmtr, err := b.competition.RemoveById(uint(id))
+	if err != nil {
+		return err.Error()
+	}
+	return cmtr.String() + "\n\n" + competitorWasDeleted
 }
 
 func listFunc(str string) string {

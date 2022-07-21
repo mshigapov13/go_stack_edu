@@ -11,9 +11,12 @@ const (
 	respWasntSended_format       = "Message wasn't sended %s"
 	requestFormatNeedsToBeHeader = "Request format needst to be:"
 	createRequestFormat          = requestFormatNeedsToBeHeader + "\n" +
-		"/create FirstName(string) LastName(string) City(string) YearBirth(integer)"
-	readRequestFroamt = requestFormatNeedsToBeHeader + "\n" +
-		"/read Id(integer)"
+		"/create FirstName(string) LastName(string) City(string) YearBirth(int)"
+	readRequestFormat = requestFormatNeedsToBeHeader + "\n" +
+		"/read Id(uint)"
+	deleteRequestFormat = requestFormatNeedsToBeHeader + "\n" +
+		"/del Id(uint)"
+	competitorWasDeleted = "competitor was removed"
 )
 
 func respTextForWrongComand(err error) string {
