@@ -60,24 +60,6 @@ func (b *Bot) Run() error {
 			} else {
 				msg.Text = responseIfError(botCmds.ErrUnknownCommand, botCmds.AvailableCommandsTitle+"\n/"+botCmds.HelpCmd)
 			}
-			// switch cmd {
-			// case listCmd:
-			// 	msg.Text = listFunc()
-			// case createCmd:
-			// 	msg.Text = createFunc()
-			// case readCmd:
-			// 	msg.Text = readFunc()
-			// case updateCmd:
-			// 	msg.Text = updateFunc()
-			// case deleteCmd:
-			// 	msg.Text = deleteFunc()
-			// case startCmd:
-			// 	msg.Text = availableCmds
-			// case helpCmd:
-			// 	msg.Text = cmdsDescription
-			// default:
-			// 	msg.Text = responseTextForWrongRequestedComand(errUnknownCommand)
-			// }
 		} else {
 			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 			msg.Text = fmt.Sprintf(userSendedTextIs_format, update.Message.Text)
