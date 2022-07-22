@@ -60,7 +60,7 @@ func (b *Bot) readFunc(str string) string {
 	if err != nil {
 		return responseIfError(errBadId, readRequestFormat)
 	}
-	cmtr, err := b.competition.ReadById(uint(id))
+	cmtr, err := b.competition.ReadByID(uint(id))
 	if err != nil {
 		return err.Error()
 	}
@@ -89,7 +89,7 @@ func (b *Bot) updateFunc(str string) string {
 		return responseIfError(err, updateRequestFormat)
 	}
 	cmtr.SetId(uint(id))
-	newCmtr, err := b.competition.UpdateById(cmtr)
+	newCmtr, err := b.competition.UpdateByID(cmtr)
 	if err != nil {
 		return err.Error()
 	}
@@ -101,7 +101,7 @@ func (b *Bot) deleteFunc(str string) string {
 	if err != nil {
 		return responseIfError(errBadId, deleteRequestFormat)
 	}
-	cmtr, err := b.competition.RemoveById(uint(id))
+	cmtr, err := b.competition.RemoveByID(uint(id))
 	if err != nil {
 		return err.Error()
 	}
