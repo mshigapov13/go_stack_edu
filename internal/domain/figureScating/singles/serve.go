@@ -19,25 +19,37 @@ func (c *Competition) Add(cmtr *models.Competitor) (*models.Competitor, error) {
 		return nil, fmt.Errorf(uneligibleAge, age, c.limitAge)
 	}
 	addedCmtr, err := c.db.Add(cmtr)
-	return addedCmtr, err
+	if err != nil {
+		return nil, err
+	}
+	return addedCmtr, nil
 }
 
 func (c *Competition) List() ([]*models.Competitor, error) {
-	list, _ := c.db.List()
+	list, err := c.db.List()
+	if err != nil {
+		return nil, err
+	}
 	return list, nil
 }
 
-func (c *Competition) ReadById(id uint) (*models.Competitor, error) {
-	cmtr, err := c.db.ReadById(id)
-	return cmtr, err
+func (c *Competition) ReadByID(id uint) (*models.Competitor, error) {
+	cmtr, err := c.db.ReadByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return cmtr, nil
 }
 
-func (c *Competition) RemoveById(id uint) (*models.Competitor, error) {
-	cmtr, err := c.db.RemoveById(id)
-	return cmtr, err
+func (c *Competition) RemoveByID(id uint) (*models.Competitor, error) {
+	cmtr, err := c.db.RemoveByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return cmtr, nil
 }
 
-func (c *Competition) UpdateById(cmtr *models.Competitor) (*models.Competitor, error) {
+func (c *Competition) UpdateByID(cmtr *models.Competitor) (*models.Competitor, error) {
 	if c.isCityUneligible(cmtr.GetCity()) {
 		return nil, fmt.Errorf(uneligibleCity)
 	}
@@ -45,6 +57,9 @@ func (c *Competition) UpdateById(cmtr *models.Competitor) (*models.Competitor, e
 	if age > c.limitAge {
 		return nil, fmt.Errorf(uneligibleAge, age, c.limitAge)
 	}
-	updatedCmtr, err := c.db.UpdateById(cmtr)
-	return updatedCmtr, err
+	updatedCmtr, err := c.db.UpdateByID(cmtr)
+	if err != nil {
+		return nil, err
+	}
+	return updatedCmtr, nil
 }

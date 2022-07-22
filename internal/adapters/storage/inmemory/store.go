@@ -15,28 +15,28 @@ func (db *InMemoryDB) Add(cmtr *models.Competitor) (*models.Competitor, error) {
 	return db.data[db.lastId], nil
 }
 
-func (db *InMemoryDB) ReadById(id uint) (*models.Competitor, error) {
+func (db *InMemoryDB) ReadByID(id uint) (*models.Competitor, error) {
 	if db.isExists(id) {
 		return db.data[id], nil
 	}
 	return nil, fmt.Errorf(competitorDoesntExists, id)
 }
 
-func (db *InMemoryDB) RemoveById(id uint) (*models.Competitor, error) {
+func (db *InMemoryDB) RemoveByID(id uint) (*models.Competitor, error) {
 	var removedCompetitor *models.Competitor
 
 	if !db.isExists(id) {
-		return models.EmptyCompetitorWithId(id), fmt.Errorf(alreadyDoesntExists, id)
+		return nil, fmt.Errorf(alreadyDoesntExists, id)
 	}
 	removedCompetitor = db.data[id]
 	db.removeFromDB(id)
 	return removedCompetitor, nil
 }
 
-func (db *InMemoryDB) UpdateById(cmtr *models.Competitor) (*models.Competitor, error) {
+func (db *InMemoryDB) UpdateByID(cmtr *models.Competitor) (*models.Competitor, error) {
 	updateId := cmtr.GetId()
 	if !db.isExists(updateId) {
-		return models.EmptyCompetitorWithId(updateId), fmt.Errorf(competitorDoesntExists, updateId)
+		return nil, fmt.Errorf(competitorDoesntExists, updateId)
 	}
 	return db.updateExistedCompetitor(cmtr), nil
 }
