@@ -11,7 +11,10 @@ const (
 	isUpdated_format             = "competitor with id=%d is updated"
 	requestFormatNeedsToBeHeader = "Request format needs to be:"
 
-	emptyCompetition    = "There are no competitors"
+	badArgCount         = "bad argument count"
+	badYearBirth        = "bad year of birth"
+	badId               = "bad request"
+	emptyCompetition    = "there are no competitors"
 	isCreated           = "competitor is created"
 	createRequestFormat = requestFormatNeedsToBeHeader + "\n/" +
 		cmds.CreateCmd + " FirstName(string) LastName(string) City(string) YearBirth(int)"

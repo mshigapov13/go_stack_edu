@@ -30,91 +30,143 @@ func startFunc(str string) string {
 func helpFunc(str string) string {
 	return cmds.HelpCmdRespText
 }
-
-func (b *Bot) createFunc(str string) string {
+func (b *Bot) addCmtr(str string) (*competitor.Competitor, error) {
 	inp := strings.Split(str, " ")
 	if len(inp) != 4 {
-		return responseIfError(errArgCount, createRequestFormat)
+		s := strings.Join([]string{badArgCount, createRequestFormat}, "\n\n")
+		return nil, fmt.Errorf(s)
 	}
+
 	fName := inp[0]
 	lName := inp[1]
 	city := inp[2]
 	yearBirth, err := strconv.Atoi(inp[3])
 	if err != nil {
-		return responseIfError(errBadYearBirth, createRequestFormat)
+		s := strings.Join([]string{badYearBirth, createRequestFormat}, "\n\n")
+		return nil, fmt.Errorf(s)
 	}
 
-	cmtr, err := competitor.NewCompetitor(fName, lName, city, yearBirth)
+	attempCmtr, err := competitor.NewCompetitor(fName, lName, city, yearBirth)
 	if err != nil {
-		return responseIfError(err, createRequestFormat)
+		s := strings.Join([]string{err.Error(), createRequestFormat}, "\n\n")
+		return nil, fmt.Errorf(s)
 	}
-	newCmtr, err := b.competition.Add(cmtr)
+	newCmtr, err := b.competition.Add(attempCmtr)
+	if err != nil {
+		return nil, err
+	}
+	return newCmtr, nil
+}
+
+func (b *Bot) createFunc(str string) string {
+	addedCmtr, err := b.addCmtr(str)
 	if err != nil {
 		return err.Error()
 	}
-	return strings.Join([]string{newCmtr.String(), isCreated}, "\n\n")
+	return strings.Join([]string{addedCmtr.String(), isCreated}, "\n\n")
+}
+
+func (b *Bot) getCmtr(str string) (*competitor.Competitor, error) {
+	id, err := strconv.ParseUint(str, 10, 64)
+	if err != nil {
+		s := strings.Join([]string{badId, readRequestFormat}, "\n\n")
+		return nil, fmt.Errorf(s)
+	}
+	cmtr, err := b.competition.ReadByID(uint(id))
+	if err != nil {
+		return nil, err
+	}
+	return cmtr, nil
 }
 
 func (b *Bot) readFunc(str string) string {
-	id, err := strconv.ParseUint(str, 10, 64)
-	if err != nil {
-		return responseIfError(errBadId, readRequestFormat)
-	}
-	cmtr, err := b.competition.ReadByID(uint(id))
+	cmtr, err := b.getCmtr(str)
 	if err != nil {
 		return err.Error()
 	}
 	return cmtr.String()
 }
 
-func (b *Bot) updateFunc(str string) string {
+func (b *Bot) updateCmtr(str string) (*competitor.Competitor, error) {
 	inp := strings.Split(str, " ")
 	if len(inp) != 5 {
-		return responseIfError(errArgCount, updateRequestFormat)
+		s := strings.Join([]string{badArgCount, updateRequestFormat}, "\n\n")
+		return nil, fmt.Errorf(s)
 	}
 	id, err := strconv.ParseUint(inp[0], 10, 64)
 	if err != nil {
-		return responseIfError(errBadId, updateRequestFormat)
+		s := strings.Join([]string{badId, updateRequestFormat}, "\n\n")
+		return nil, fmt.Errorf(s)
 	}
 	fName := inp[1]
 	lName := inp[2]
 	city := inp[3]
 	yearBirth, err := strconv.Atoi(inp[4])
 	if err != nil {
-		return responseIfError(errBadYearBirth, updateRequestFormat)
+		s := strings.Join([]string{badYearBirth, updateRequestFormat}, "\n\n")
+		return nil, fmt.Errorf(s)
 	}
-
-	cmtr, err := competitor.NewCompetitor(fName, lName, city, yearBirth)
+	attempCmtr, err := competitor.NewCompetitor(fName, lName, city, yearBirth)
 	if err != nil {
-		return responseIfError(err, updateRequestFormat)
+		s := strings.Join([]string{err.Error(), updateRequestFormat}, "\n\n")
+		return nil, fmt.Errorf(s)
 	}
-	cmtr.SetId(uint(id))
-	newCmtr, err := b.competition.UpdateByID(cmtr)
+	attempCmtr.SetId(uint(id))
+	updatedCmtr, err := b.competition.UpdateByID(attempCmtr)
+	if err != nil {
+		return nil, err
+	}
+	return updatedCmtr, nil
+}
+
+func (b *Bot) updateFunc(str string) string {
+	cmtr, err := b.updateCmtr(str)
 	if err != nil {
 		return err.Error()
 	}
-	return strings.Join([]string{newCmtr.String(), fmt.Sprintf(isUpdated_format, id)}, "\n\n")
+	return strings.Join([]string{cmtr.String(), fmt.Sprintf(isUpdated_format, cmtr.GetId())}, "\n\n")
+}
+
+func (b *Bot) deleteCmtr(str string) (*competitor.Competitor, error) {
+	id, err := strconv.ParseUint(str, 10, 64)
+	if err != nil {
+		s := strings.Join([]string{badId, deleteRequestFormat}, "\n\n")
+		return nil, fmt.Errorf(s)
+	}
+	attempCmtr, err := b.competition.RemoveByID(uint(id))
+	if err != nil {
+		return nil, err
+	}
+	return attempCmtr, nil
 }
 
 func (b *Bot) deleteFunc(str string) string {
-	id, err := strconv.ParseUint(str, 10, 64)
-	if err != nil {
-		return responseIfError(errBadId, deleteRequestFormat)
-	}
-	cmtr, err := b.competition.RemoveByID(uint(id))
+	cmtr, err := b.deleteCmtr(str)
 	if err != nil {
 		return err.Error()
 	}
-	return strings.Join([]string{cmtr.String(), fmt.Sprintf(isDeleted_format, id)}, "\n\n")
+	return strings.Join([]string{cmtr.String(), fmt.Sprintf(isDeleted_format, cmtr.GetId())}, "\n\n")
+}
+
+func (b *Bot) listCmtrs(str string) ([]*competitor.Competitor, error) {
+	if str != "" {
+		s := strings.Join([]string{badArgCount, listRequestFormat}, "\n\n")
+		return nil, fmt.Errorf(s)
+	}
+	list, err := b.competition.List()
+	if err != nil {
+		return nil, err
+	}
+	if len(list) == 0 {
+		return nil, fmt.Errorf(emptyCompetition)
+	}
+	return list, nil
 }
 
 func (b *Bot) listFunc(str string) string {
-	if str != "" {
-		return responseIfError(errArgCount, listRequestFormat)
-	}
-	list, _ := b.competition.List()
-	if len(list) == 0 {
-		return emptyCompetition
+	list, err := b.listCmtrs(str)
+	if err != nil {
+		return err.Error()
 	}
 	res := make([]string, len(list))
 	for i, v := range list {

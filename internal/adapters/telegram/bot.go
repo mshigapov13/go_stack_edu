@@ -28,7 +28,8 @@ func InitTgBot(cfg config.Bot, competition ports.CompetitionService) (*Bot, erro
 
 	botAPI, err = tgbotapi.NewBotAPI(cfg.Token)
 	if err != nil {
-		log.Fatalf(botCreationIsFalied_format, err)
+		s := fmt.Sprintf(botCreationIsFalied_format, err.Error())
+		return nil, fmt.Errorf(s)
 	}
 
 	botAPI.Debug = true
@@ -67,6 +68,7 @@ func (b *Bot) Run() error {
 		_, err := b.API.Send(msg)
 		if err != nil {
 			log.Printf(respWasntSended_format, err)
+			return err
 		}
 	}
 	return nil
